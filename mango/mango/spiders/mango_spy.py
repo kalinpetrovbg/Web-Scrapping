@@ -30,24 +30,23 @@ class MangSpySpider(scrapy.Spider):
         name = response.xpath('//h1/text()').get()
         prices = response.xpath('//span[contains(@class, "product-sale" )]/text()').getall()
         selected_color = response.xpath('//div[contains(@class, "color-container")]/img/@alt').get()
-        sizes = response.xpath('//div[contains(@class, "selector")]/div/span/text()').getall()
+        sizes = response.xpath('//div[contains(@class, "selector")]/div/span/@data-size').getall()
 
-        """ When there are regular and sale price, 'prices' has two elements.
+        """ PRICE
+        When there are regular and sale price, 'prices' has two elements.
         We take only the last element, which is the current selling price.
-        Then with replace() function we remove the currency abbreviation "лв.".
-        """
+        Then with replace() function we remove the currency abbreviation "лв."."""
         price = prices[-1].replace("\\u043b\\u0432.", "")
 
-        """ Delete unnecessary symbols from the selected color """
+        """ COLOR
+        Delete unnecessary symbols from the selected color """
         color = selected_color[2:-2]
 
-        """ Splits each of the text elements from 'sizes' and gets only 
-        the size abbreviation (example: S, M, L, XL) 
-        """
+        """ SIZE
+        Delete unnecessary symbols from each of the size types """
         size = []
         for each in sizes:
-            abbreviation, _ = each.split(" - ")
-            size.append(abbreviation)
+            size.append(each[2:-2])
 
         yield {
             "name": name,
