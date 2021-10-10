@@ -32,8 +32,11 @@ class AntaresSpider(scrapy.Spider):
         for e in elements:
             name = e.xpath('.//a/@title').get()
             link = e.xpath('.//a/@href').get()
+            price = e.xpath('.//div[@class="standardh3 price_top"]/text()').getall()
+            corrected_price = price[-1][5:]
 
             yield {
                 "name": name,
-                "link": f"{domain}{link}"
+                "price": corrected_price,
+                "link": f"{domain}{link}",
             }
